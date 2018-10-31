@@ -81,30 +81,30 @@ Calculons maintenant le biais de l'estimateur. On peut le faire en calculant l'e
 
 $$\begin{align}
 E \Bigg[\frac{1}{\frac{1}{n\sum X_i}} \Bigg] &= E \Big[ \frac{n}{\sum X_i} \Big] \newline
-&= n \int_{R^+} \frac{1}{x} \frac{x^{n-1}e^{-\frac{x}{\lambda}}}{\Gamma(n)\lambda^n} dx \newline
-&= \frac{n}{\Gamma(n)\lambda^n} \int_{R+}x^{n-2}e^{-\frac{x}{\lambda}} dx \newline
+&= n \int_{R^+} \frac{1}{x} \frac{\lambda^n}{\Gamma(n)}e^{-\lambda x}x^{n-1} dx \newline
+&= \frac{\lambda^n n}{\Gamma(n)} \int_{R^+} e^{-\lambda x} x^{n-2}dx \newline
 \end{align}$$
 
 On voit dans la dernière équation que l'on a une forme qui ressemble à la fonction Gamma d'Euler. 
 $$\Gamma : z \int_0^{+\infty} t^{z-1}e^{-t} dt$$
 $$\begin{align}
-u = \frac{x}{\lambda} ; dx = \lambda du 
+u = \lambda x ; dx = \frac{du}{\lambda}
 \end{align}$$
 
 Donc, par changement de variable : 
 $$\begin{align}
  E \Bigg[\frac{n}{\sum X_i} \Bigg] &= \frac{n}{\Gamma(n)\lambda^n} \int_{R+} \lambda^{n-2}u^{n-2}e^{-u}\lambda du \newline
- &= \frac{\lambda n}{\Gamma(n)\lambda^n}\int_{R+} u^{n-2}e^{-u}du \newline
- &= \frac{n}{\Gamma(n)\lambda} \Gamma(n-1) \newline
- &= \frac{(n-2)!}{(n-1)!}\frac{n}{\lambda} \newline
- &= \frac{n}{n-1}\frac{1}{\lambda}
+ &= \frac{\lambda^n n}{\Gamma(n)}\int_{R+} e^{-u}(\frac{u}{\lambda})^{n-2} \frac{du}{\lambda} \newline
+ &= \frac{\lambda n}{\Gamma(n)} \Gamma(n-1) \newline
+ &= \frac{(n-2)! n \lambda}{(n-1)!} \newline
+ &= \lambda \frac{n}{n-1}
 \end{align}$$
 Voir les propriétés de la fonction Gamma. 
 
 Il faut donc multiplier notre estimateur par $\frac{n-1}{n}$ pour qu'il ne soit plus biaisé. 
 $$\begin{align}
- E\Big[ \hat{\theta_n}\Big] = \frac{n}{n-1}\frac{1}{n}  \newline
- E \Big[\frac{n-1}{n}\hat{\theta_n}\Big] = \frac{1}{\lambda}
+ E\Big[ \hat{\theta_n}\Big] = \frac{n}{n-1}\lambda \newline
+ E \Big[\frac{n-1}{n}\hat{\theta_n}\Big] = \lambda
 \end{align}$$
 
 Dire que l'on veut ne remplacer que 10% des transistors si la garantie est de t nombre d'années, cela revient à dire que la probabilité qu'on tire un transistors dont la durée de vie sera inférieur à t est de 10%. 
