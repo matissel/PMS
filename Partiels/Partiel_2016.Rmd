@@ -1,0 +1,138 @@
+---
+title: "Partiel 2016"
+author: "Matisse Landais"
+date: "21 octobre 2018"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+On veut ne remplacer que 10% des transistors. Il faut donc commencer par déterminer la loi que pourrait suivre ces transistors, connaître le paramètre de cette loi puis déterminer la garantie (un certain t) pour ne changer que 10% des transistors. 
+
+```{r}
+dureeVie <- c(0.22,0.24,0.29,0.29,0.33,0.47,0.85,1.14,1.50,1.51,1.64,1.96,2.27,2.44,2.75,2.99,3.15,3.85,4.66,5.04,5.06,6.41,7.58,7.81,8.00,8.24,10.15,12.24,13.78,16.12)
+```
+
+On peut commencer par tracer les histogrammes (classes de même effectif)
+
+```{r}
+
+histoeff <- function(x, xlim=NULL, ...)
+{
+  sx <- sort(x)
+  n <- length(x)
+  k <- round(log(n)/log(2)+1)
+  rangex <- max(x)-min(x)
+  quantileVoulu <- quantile(x, seq(1,k-1)/k, max(x))
+
+  breaks <- c(min(x)-0.025*rangex, quantileVoulu, max(x)+0.025*rangex)
+  col <- 0
+  if (is.null(xlim)) xlim<-c(breaks[1], breaks[k+1])
+  colors = c("red", "yellow", "green", "violet", "orange", "blue", "pink", "cyan")
+  
+  hist(x, breaks=breaks, col=colors, xlim=xlim, probability=T)
+}
+
+histoeff(dureeVie)
+```
+
+On peut observer que cela ressemble à une loi exponentielle. En traçant le graphe de probabilités pour la loi exponentielle on peut se rapprocher de cette hypothèse. 
+
+```{r}
+graphProba <- function(xi,hxi,limy)
+{
+  plot(xi,hxi)
+  abline(v=0)
+  abline(h=0)
+}
+
+# x représente le tableau non trié avec les observations sur les ampoules
+# log(1 - seq(1:9)/10) est la transformation de la fonction de répartition de la loi exponentielle
+# sort(x) [1:9] est le tableau x trié en ne gardant que les 9 premiers éléments
+lastElem <- length(dureeVie)
+blElem <- length(dureeVie)-1
+#limy<-c(-2.5,0.1)
+myxi <- sort(dureeVie)[1:blElem]
+myhxi <- log(1-seq(1:blElem)/lastElem)
+
+
+graphProba(myxi,myhxi)
+``` 
+
+Je pense que la loi est une loi exponentielle et j'essaie de déterminer une approximation du paramètre de cette loi, $\lambda$.
+On utilise le maximum de vraisemblance pour l'estimer :  
+$$\widehat{\lambda} = \frac{1}{\overline{X_n}}$$ ou $X_n$ est la moyenne de mon échantillon.
+```{r}
+moyenneEmpirique <- mean(dureeVie)
+lambdaApp = 1/moyenneEmpirique
+print(lambdaApp)
+chip <- function(x) lambdaApp * exp(-lambdaApp * x)
+curve(chip, from=0, to=18)
+```
+
+
+Calculons maintenant le biais de l'estimateur. On peut le faire en calculant l'esperance théorique de mon estimateur. La somme des $$\frac{1}{n}X_i$$ est une loi Gamma de paramètre $(n,\lambda)$
+
+$$\begin{align}
+E \Bigg[\frac{1}{\frac{1}{n\sum X_i}} \Bigg] &= E \Big[ \frac{n}{\sum X_i} \Big] \newline
+&= n \int_{R^+} \frac{1}{x} \frac{x^{n-1}e^{-\frac{x}{\lambda}}}{\Gamma(n)\lambda^n} dx \newline
+&= \frac{n}{\Gamma(n)\lambda^n} \int_{R+}x^{n-2}e^{-\frac{x}{\lambda}} dx \newline
+\end{align}$$
+
+On voit dans la dernière équation que l'on a une forme qui ressemble à la fonction Gamma d'Euler. 
+$$\Gamma : z \int_0^{+\infty} t^{z-1}e^{-t} dt$$
+$$\begin{align}
+u = \frac{x}{\lambda} ; dx = \lambda du 
+\end{align}$$
+
+Donc, par changement de variable : 
+$$\begin{align}
+ E \Bigg[\frac{n}{\sum X_i} \Bigg] &= \frac{n}{\Gamma(n)\lambda^n} \int_{R+} \lambda^{n-2}u^{n-2}e^{-u}\lambda du \newline
+ &= \frac{\lambda n}{\Gamma(n)\lambda^n}\int_{R+} u^{n-2}e^{-u}du \newline
+ &= \frac{n}{\Gamma(n)\lambda} \Gamma(n-1) \newline
+ &= \frac{(n-2)!}{(n-1)!}\frac{n}{\lambda} \newline
+ &= \frac{n}{n-1}\frac{1}{\lambda}
+\end{align}$$
+Voir les propriétés de la fonction Gamma. 
+
+Il faut donc multiplier notre estimateur par $\frac{n-1}{n}$ pour qu'il ne soit plus biaisé. 
+$$\begin{align}
+ E\Big[ \hat{\theta_n}\Big] = \frac{n}{n-1}\frac{1}{n}  \newline
+ E \Big[\frac{n-1}{n}\hat{\theta_n}\Big] = \frac{1}{\lambda}
+\end{align}$$
+
+Dire que l'on veut ne remplacer que 10% des transistors si la garantie est de t nombre d'années, cela revient à dire que la probabilité qu'on tire un transistors dont la durée de vie sera inférieur à t est de 10%. 
+Avec la fonction de répartition, cela correspond à : 
+$$F_x(t) = P(X \leq t) = 0.1$$
+
+Il faut déterminer t. Comme $F_x(t)$ est strictement croissante, elle est inversible. Alors :
+$$
+\begin{align}
+t &= F^{-1}(0.1) \\
+1 - e^{-\lambda t} &= 0.1 \newline
+e^{-\lambda t} &= 0.9 \newline
+ln(e^{-\lambda t }) &= ln(0.9) \newline 
+-\lambda t &= ln(0.9) \newline
+t &= -\frac{ln(0.9)}{\lambda} = F^{-1}(0.1)
+\end{align}
+$$
+```{r}
+t <- (-1*log(0.9))/lambdaApp
+# n : nombre de valeurs
+n <- length(dureeVie)
+t <- t*((n-1)/(n))
+# En milliers d'heures
+print(t)
+# En heures
+print(t*1000)
+# En jours
+print((t*1000)/24)
+```
+
+Il faudrait fixer la garantie à 0.451 milliers d'heures pour n'avoir que 10% des transistors à changer. 

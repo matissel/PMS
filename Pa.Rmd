@@ -1,0 +1,11 @@
+---
+title: "Partiel_2017"
+author: "Matisse Landais"
+date: "26 octobre 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+

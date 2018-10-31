@@ -1,0 +1,102 @@
+---
+title: "TPerso1"
+author: "Matisse Landais"
+date: "30 septembre 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+histogrammeClasse <-function(tab, pfAbs, pfOrd, limAbs, limOrd) {
+  # Soit c le tableau que l'on veut plot.
+  
+  k = 0 # Nombre de classes
+  a0 = 0 # Borne min
+  ak = 0 # Borne max
+  h = 0 # Hauteur du rectangle
+  
+  # Calcul du nombre de classes
+  if (length(tab) <= 22) {
+    k = 5 
+  }else{
+    k = 1 + round(log2(length(tab)))
+  }
+  
+  # Choix des bornes
+  # Premier et dernier élément du table
+  preElem = tab[1]
+  derElem = tail(tab,n=1)
+  
+  # Premiere borne et dernière borne. 0 et 260 dans notre cas (ampoule)
+  a0 = preElem - 0.025*(derElem - preElem)
+  ak = derElem + 0.025*(derElem - preElem)
+  
+  # Calcul de la largeur 
+  h = (ak - a0)/k
+  
+  # On plot
+  colors = c("red", "yellow", "green", "violet", "orange", "blue", "pink", "cyan")
+  hist(tab, prob=T, col=colors, breaks=seq(0,10,1), xlim=c(0,limAbs), ylim=c(0,limOrd))
+  if (length(pfAbs) > 1){
+    lines(pfAbs,pfOrd,lwd=3)
+  }
+}
+
+histoeff <- function(x, xlim=NULL, ...)
+{
+  sx <- sort(x)
+  n <- length(x)
+  k <- round(log(n)/log(2)+1)
+  rangex <- max(x)-min(x)
+  quantileVoulu <- quantile(x, seq(1,k-1)/k, max(x))
+
+  breaks <- c(0, quantileVoulu, 10)
+
+  col <- 0
+  if (is.null(xlim)) xlim<-c(breaks[1], breaks[k+1])
+  colors = c("red", "yellow", "green", "violet", "orange", "blue", "pink", "cyan")
+  
+  hist(x, breaks=breaks, col=colors, xlim=xlim, probability=T, ...)
+}
+```
+
+
+
+# Générateur de nombre aléatoire
+
+Un générateur devrai suivre une loi uniforme sur l'intervalle voulu (selon le générateur)
+Je vais utiliser runif, mais cela fonctionne de la même façon pour sample. 
+
+## Avec 30 valeurs
+
+```{r}
+rando<-sample(1:10,1)
+
+# Generation de 30 nombres 
+randoTrente<-runif(30,0,10)
+#On trie les valeurs pour ne pas avoir de problème avec le seq !! 
+randoTrente <- sort(randoTrente)
+
+pfAbs<-c()
+pfOrd<-c()
+limAbs <- round(max(randoTrente))
+limOrd <- 0.25
+histogrammeClasse(randoTrente, pfAbs, pfOrd, limAbs, limOrd)
+histoeff(randoTrente)
+```
+On observe une répartition qui n'est pas vraiment uniforme. Cela est due au faible nombre de valeurs. 
+
+## Avec 1000 valeurs
+
+```{r}
+randoMille<-runif(100000,0,10)
+randoMille<-sort(randoMille)
+limAbs <- round(max(randoMille))
+limOrd <- 0.12
+histogrammeClasse(randoMille, pfAbs, pfOrd, limAbs, limOrd)
+histoeff(randoMille)
+```
+

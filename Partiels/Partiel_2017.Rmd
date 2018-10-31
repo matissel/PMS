@@ -1,0 +1,83 @@
+---
+title: "Partiel_2017"
+author: "Matisse Landais"
+date: "26 octobre 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Q1 : Histogramme
+On commence par construire 
+```{r}
+donnees <- c(-0.97,-0.96,-0.93,-0.91,-0.90,-0.87,-0.85,-0.80,-0.75,-0.73,-0.66,-0.65,-0.63,-0.60,-0.58,-0.51,-0.48,-0.45,-0.44,-0.40,-0.37,-0.33,-0.3,-0.25,-0.12,-0.08,0.25,0.41,0.51,0.68)
+```
+
+
+
+```{r}
+histogrammeClasse <-function(tab) {
+  # Soit c le tableau que l'on veut plot.
+  
+  k = 0 # Nombre de classes
+  a0 = 0 # Borne min
+  ak = 0 # Borne max
+  h = 0 # Hauteur du rectangle
+  
+  # Calcul du nombre de classes
+  if (length(tab) <= 22) {
+    k = 5 
+  }else{
+    k = 1 + round(log2(length(tab)))
+  }
+  
+  # Choix des bornes
+  # Premier et dernier élément du table
+  preElem = tab[1]
+  derElem = tail(tab,n=1)
+  
+  # Premiere borne et dernière borne. 0 et 260 dans notre cas (ampoule)
+  a0 = preElem - 0.025*(derElem - preElem)
+  ak = derElem + 0.025*(derElem - preElem)
+  
+  # Calcul de la largeur 
+  h = (ak - a0)/k
+  
+  br <- seq(-1.5,1.5,0.5)
+  # On plot
+  colors = c("red", "yellow", "green", "violet", "orange", "blue", "pink", "cyan")
+  hist(tab, prob=T, col=colors,breaks=br,xlim=c(-1.5,1.5))
+  
+}
+
+```
+
+
+```{r, echo=FALSE}
+
+limAbs <- 1
+limOrd <- 0.009
+histogrammeClasse(donnees)
+```
+
+
+## Q2
+```{r}
+graphProba <- function(xi,hxi,limy)
+{
+  plot(xi,hxi)
+}
+
+# x représente le tableau non trié avec les observations sur les ampoules
+# log(1 - seq(1:9)/10) est la transformation de la fonction de répartition de la loi exponentielle
+# sort(x) [1:9] est le tableau x trié en ne gardant que les 9 premiers éléments
+lastElem <- length(donnees)
+blElem <- length(donnees)-1
+#limy<-c(-2.5,0.1)
+myxi <- sort(donnees)[1:lastElem]
+myhxi <- (sqrt(1-(seq(1:lastElem)/lastElem)))
+
+graphProba(myxi,myhxi)
+``` 
+Les points sont alignés, la loi triangle semble convenir. 

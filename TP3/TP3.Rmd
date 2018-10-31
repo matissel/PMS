@@ -1,0 +1,57 @@
+---
+title: "TP3"
+author: "Matisse Landais"
+date: "11 octobre 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Un modèle valable pour votre générateur de nombre aléatoire préféré ? 
+
+### Graphe de probabilité loi normale
+```{r}
+valeurs <- runif(30,0,1)
+```
+
+Graphe de probabilités
+$$
+X \sim N(m,\sigma^2) \\ 
+U \sim N(0,1) \\
+F(x) = P(X \leq x) = P(U \leq \frac{x-m}{\sigma}) = \phi \big( \frac{x-m}{\sigma}\big).
+$$
+$\phi$ est la fonction de répartition de la loi normale 0,1 à laquelle on applique le paramètre $\frac{x-m}{\sigma}$. $\phi$ étant strictement croissante, elle est inversible. Alors : 
+$$\phi^-1 \big( F(x)\big) = \phi^-1 \bigg(\phi(\frac{x-m}{\sigma}) \bigg) = \frac{x-m}{\sigma} = \frac{1}{\sigma}x -\frac{m}{\sigma}$$
+On a donc quelque chose qui ne dépend plus de sigma, de la forme : 
+$$h[F(x)] = \alpha(\theta)g(x) + \beta(\theta)$$
+Le nuage de point $$(g(x_i^*), h(i/n))$$ est donc un graphe de probabilité tel que $$h(x) = \phi^-1$$ et $$g(x) = x$$
+Donc le graphe de probabilité est : $$(x_i^*, \phi^-1(i/n))$$
+
+```{r}
+plot(sort(valeurs)[1:29], qnorm(seq(1:29)/30))
+```
+
+## Graphe de probablité loi uniforme
+Il n'y a pas de transformations à faire car la loi uniforme sur 0,1 ne dépend d'aucun paramètre. 
+
+```{r}
+plot(sort(valeurs)[1:30], seq(1:30)/30)
+```
+
+### Conclusion intermédiaire
+
+Ce deux graphes ne prouvent rien. On ne peux pas dire que le générateur suit ni l'une ni l'autre loi car les nuages de points n'indiquent rien. Cela est dut au faible nombre de valeurs.
+
+## Avec des plus gros échantillons
+
+```{r}
+valeurs1000 <- runif(1000,0,1)
+plot(sort(valeurs1000)[1:999], qnorm(seq(1:999)/1000))
+plot(sort(valeurs1000)[1:1000], seq(1:1000)/1000)
+```
+
+### Conclusion finale
+
+On peut voir qu'avec plus de valeurs on obtiens une nouvelle conclusion. Le générateur suit bien une loi uniforme, ce qui n'est pas le cas de la loi normale.

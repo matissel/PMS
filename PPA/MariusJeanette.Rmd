@@ -1,0 +1,90 @@
+---
+title: "Marius et Jeanette"
+author: "Matisse Landais"
+date: "12 octobre 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Marius et Jeanette
+
+Marius dit que l'attente maximale est de 2*moyenne(temps) = 10.46
+Jeanette dit que c'est la valeur maximale = 9.5
+
+```{r}
+tempsBus <- c(1,2.1,2.8,3.7,5.3,6,6.5,7.2,8.2,9.5)
+print(2*mean(tempsBus))
+```
+
+Cela ressemble à une loi uniforme entre 0 et t. 
+
+Marius prend la moyenne ((b-a)/2) alors que Jeanette prend la valeur max observé.
+
+```{r}
+jaja <- c()
+marmar <- c()
+val <- runif(10000,0,11)
+for(i in 1:100)
+{
+  monS <- sample(val,10)
+  jaja <- c(jaja,max(monS))
+  marmar <- c(marmar,mean(monS)*2)
+}
+varM <- var(marmar)
+varJ <- var(jaja)
+
+print("Variance et moyenne de marius")
+print(varM)
+print(mean(marmar))
+
+print("Variance et moyenne de jeanette")
+print(varJ)
+print(mean(jaja))
+
+```
+
+Sur ce sample, on peut voir que Jeanette est très précise mais inexact, alors que Marius est plus souvent exact mais moins précis. En termes mathématiques, Jeanette a une variance faible et une valeur max eloigné de la valeur théorique, Marius une valeur max proche de la valeur théorique, mais une variance elevée. 
+
+On peut penser que si on applique un paramètre correctif aux hypothèses de Jeanette, on pourrait se raproche de la valeur max théorique. 
+
+```{r}
+ecarts <- c()
+jaja <- c()
+valeurs <- runif(1000,0,11)
+for(i in 1:100)
+{
+  s <- sample(valeurs,10)
+  jaja <- c(jaja, max(s)+0.9)
+  maxS <- 11 - max(s) + 0.9
+  ecarts <- c(ecarts,maxS)
+}
+
+print(mean(jaja))
+print(var(jaja))
+plot(jaja)
+```
+
+
+Si on dessine la courbe des valeurs pour comparer théorique et Jeanette
+```{r}
+valeurs <- runif(1000,0,11)
+jaja <- c()
+nous <- c()
+for(i in 1:100)
+{
+  s <- sample(valeurs,10)
+  jaja <- c(jaja, max(s))
+  nous <- c(nous, max(s)+0.9)
+}
+
+scatter.smooth(jaja,col="orange")
+scatter.smooth(nous,col="green",add=TRUE)
+#plot(jaja, col="orange")
+#points(nous, col="green")
+abline(h=11)
+
+
+```
