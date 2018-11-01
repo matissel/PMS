@@ -183,22 +183,22 @@ curve(chip, from=0, to=18)</code></pre>
 <p>Calculons maintenant le biais de l’estimateur. On peut le faire en calculant l’esperance théorique de mon estimateur. La somme des <span class="math display">\[\frac{1}{n}X_i\]</span> est une loi Gamma de paramètre <span class="math inline">\((n,\lambda)\)</span></p>
 <p><span class="math display">\[\begin{align}
 E \Bigg[\frac{1}{\frac{1}{n\sum X_i}} \Bigg] &amp;= E \Big[ \frac{n}{\sum X_i} \Big] \newline
-&amp;= n \int_{R^+} \frac{1}{x} \frac{x^{n-1}e^{-\frac{x}{\lambda}}}{\Gamma(n)\lambda^n} dx \newline
-&amp;= \frac{n}{\Gamma(n)\lambda^n} \int_{R+}x^{n-2}e^{-\frac{x}{\lambda}} dx \newline
+&amp;= n \int_{R^+} \frac{1}{x} \frac{\lambda^n}{\Gamma(n)}e^{-\lambda x}x^{n-1} dx \newline
+&amp;= \frac{\lambda^n n}{\Gamma(n)} \int_{R^+} e^{-\lambda x} x^{n-2}dx \newline
 \end{align}\]</span></p>
 <p>On voit dans la dernière équation que l’on a une forme qui ressemble à la fonction Gamma d’Euler. <span class="math display">\[\Gamma : z \int_0^{+\infty} t^{z-1}e^{-t} dt\]</span> <span class="math display">\[\begin{align}
-u = \frac{x}{\lambda} ; dx = \lambda du 
+u = \lambda x ; dx = \frac{du}{\lambda}
 \end{align}\]</span></p>
 <p>Donc, par changement de variable : <span class="math display">\[\begin{align}
  E \Bigg[\frac{n}{\sum X_i} \Bigg] &amp;= \frac{n}{\Gamma(n)\lambda^n} \int_{R+} \lambda^{n-2}u^{n-2}e^{-u}\lambda du \newline
- &amp;= \frac{\lambda n}{\Gamma(n)\lambda^n}\int_{R+} u^{n-2}e^{-u}du \newline
- &amp;= \frac{n}{\Gamma(n)\lambda} \Gamma(n-1) \newline
- &amp;= \frac{(n-2)!}{(n-1)!}\frac{n}{\lambda} \newline
- &amp;= \frac{n}{n-1}\frac{1}{\lambda}
+ &amp;= \frac{\lambda^n n}{\Gamma(n)}\int_{R+} e^{-u}(\frac{u}{\lambda})^{n-2} \frac{du}{\lambda} \newline
+ &amp;= \frac{\lambda n}{\Gamma(n)} \Gamma(n-1) \newline
+ &amp;= \frac{(n-2)! n \lambda}{(n-1)!} \newline
+ &amp;= \lambda \frac{n}{n+1}
 \end{align}\]</span> Voir les propriétés de la fonction Gamma.</p>
 <p>Il faut donc multiplier notre estimateur par <span class="math inline">\(\frac{n-1}{n}\)</span> pour qu’il ne soit plus biaisé. <span class="math display">\[\begin{align}
- E\Big[ \hat{\theta_n}\Big] = \frac{n}{n-1}\frac{1}{n}  \newline
- E \Big[\frac{n-1}{n}\hat{\theta_n}\Big] = \frac{1}{\lambda}
+ E\Big[ \hat{\theta_n}\Big] = \frac{n}{n-1}\lambda \newline
+ E \Big[\frac{n-1}{n}\hat{\theta_n}\Big] = \lambda
 \end{align}\]</span></p>
 <p>Dire que l’on veut ne remplacer que 10% des transistors si la garantie est de t nombre d’années, cela revient à dire que la probabilité qu’on tire un transistors dont la durée de vie sera inférieur à t est de 10%. Avec la fonction de répartition, cela correspond à : <span class="math display">\[F_x(t) = P(X \leq t) = 0.1\]</span></p>
 <p>Il faut déterminer t. Comme <span class="math inline">\(F_x(t)\)</span> est strictement croissante, elle est inversible. Alors : <span class="math display">\[
@@ -211,19 +211,22 @@ ln(e^{-\lambda t }) &amp;= ln(0.9) \newline
 t &amp;= -\frac{ln(0.9)}{\lambda} = F^{-1}(0.1)
 \end{align}
 \]</span></p>
+<pre class="r"><code>n &lt;- length(dureeVie)
+lambdaApp = lambdaApp * (n)/(n+1)
+print(lambdaApp)</code></pre>
+<pre><code>## [1] 0.2183205</code></pre>
 <pre class="r"><code>t &lt;- (-1*log(0.9))/lambdaApp
 # n : nombre de valeurs
-n &lt;- length(dureeVie)
-t &lt;- t*((n-1)/(n))
+
 # En milliers d'heures
 print(t)</code></pre>
-<pre><code>## [1] 0.4514604</code></pre>
+<pre><code>## [1] 0.4825956</code></pre>
 <pre class="r"><code># En heures
 print(t*1000)</code></pre>
-<pre><code>## [1] 451.4604</code></pre>
+<pre><code>## [1] 482.5956</code></pre>
 <pre class="r"><code># En jours
 print((t*1000)/24)</code></pre>
-<pre><code>## [1] 18.81085</code></pre>
+<pre><code>## [1] 20.10815</code></pre>
 <p>Il faudrait fixer la garantie à 0.451 milliers d’heures pour n’avoir que 10% des transistors à changer.</p>
 
 
