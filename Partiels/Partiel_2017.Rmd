@@ -47,8 +47,9 @@ histogrammeClasse <-function(tab) {
   br <- seq(-1.5,1.5,0.5)
   # On plot
   colors = c("red", "yellow", "green", "violet", "orange", "blue", "pink", "cyan")
-  hist(tab, prob=T, col=colors,breaks=br,xlim=c(-1.5,1.5))
-  
+  hist = hist(tab, prob=T, col=colors,breaks=br,xlim=c(-1.5,1.5))
+  lines(hist$mids, hist$density, lwd=3, col="Red")
+  lines(density(tab), lwd=3, col="Blue")
 }
 
 ```
@@ -81,3 +82,140 @@ myhxi <- (sqrt(1-(seq(1:lastElem)/lastElem)))
 graphProba(myxi,myhxi)
 ``` 
 Les points sont alignés, la loi triangle semble convenir. 
+
+
+```{r}
+# On peut faire de cette façon aussi 
+fe <- ecdf(donnees)
+plot(donnees, sqrt(1-fe(donnees)), main="sqrt(1-fe(x))")
+```
+
+## Q3 
+```{r}
+simTriangle <- function (t) {
+  return(t-((2*t)*sqrt(1-runif(1))))
+}
+
+main1 <- function() {
+  n=3000
+  vect=numeric(n)
+  for(i in 1:n) {
+    vect[i] = simTriangle(4)
+  }
+  hist(vect)
+}
+main1()
+
+```
+
+```{r}
+Fx <- function(x) {
+  return(1-(((tt-x)^2)/(4*tt^2)))
+}
+
+inverse = function (f, lower = -100, upper = 100) {
+  function (y) uniroot((function (x) f(x) - y), lower = lower, upper = upper)[1]
+}
+main2 <- function() {
+  tt <<- 4
+  simTriInv <- inverse(Fx, -tt, tt)
+  n=3000
+  vect=numeric(n)
+  for(i in 1:n) {
+    vect[i] <- unlist(simTriInv(runif(1))[1], use.names=FALSE)
+  }
+  
+  hist(vect, col=rgb(1,0,0,0.5))
+  
+  vect=numeric(n)
+  for(i in 1:n) {
+    vect[i] = simTriangle(4)
+  }
+  # En utilisant la variable T 
+  hist(vect, col=rgb(0,1,0,0.5), add=T)
+}
+main2()
+```
+
+
+## Q4 
+Le premier propose de faire -3 fois le jeu de données 
+```{r}
+simTriN <- function(n, t) {
+  vect=numeric(n)
+  for(i in 1:n) {
+    vect[i] = simTriangle(t)
+  }
+  return(vect)
+}
+
+main3 <- function(nIt) {
+  # On prend nIt fois des samples de 30 
+  # On prend -3 fois la moyenne de ce sample et on l'ajoute à tSim
+  # On fait tSim/nIt pour obtenir la moyenne. On fait : abs(tSim-t) pour savoir notre biais empirique 
+  tSim <- 0
+  tSim2 <- 0
+  tSim3 <- 0 
+  tSim4 <- 0 
+  t <- 4
+  scoreDispersion <- 0
+  scoreDispersion2 <- 0
+  scoreDispersion3 <- 0 
+  scoreDispersion4 <- 0
+  for(i in 1:nIt){
+    if(nIt == 1)
+    {
+      vect <- simTriN(3000, t)
+    }else{
+      vect <- simTriN(30, t)
+    }
+    
+    tSim <- -3*mean(vect) + tSim
+    tSim2 <- max(vect) + tSim2
+    tSim3 <- -1*min(vect) + tSim3
+    tSim4 <- (max(vect)-min(vect))/2  +tSim4
+    scoreDispersion <- scoreDispersion + abs(tSim-t)
+    scoreDispersion2 <- scoreDispersion2 + abs(tSim2-t)
+    scoreDispersion3 <- scoreDispersion3 + abs(tSim3-t)
+    scoreDispersion4 <- scoreDispersion4 + abs(tSim4-t)
+  }
+  tSim <- tSim/nIt
+  cat(tSim)
+  cat("\nbiais = ", ((tSim/t)*100)-100, "%")
+  cat("\nScore dispersion = ", scoreDispersion)
+  cat("\n")
+  tSim2 <- tSim2/nIt
+  cat(tSim)
+  cat("\nbiais methode 2 = ", ((tSim2/t)*100)-100, "%")
+  cat("\nScore dispersion = ", scoreDispersion2)
+  cat("\n")
+  tSim3 <- tSim3/nIt
+  cat(tSim)
+  cat("\nbiais methode 3 = ", ((tSim3/t)*100)-100, "%")
+  cat("\nScore dispersion = ", scoreDispersion3)
+  
+  
+  cat("\n")
+  tSim4 <- tSim4/nIt
+  cat(tSim)
+  cat("\nbiais methode 4 = ", ((tSim4/t)*100)-100, "%")
+  cat("\nScore dispersion = ", scoreDispersion4)
+}
+
+main3(1000)
+
+main3(1)
+main3(2)
+```
+
+On peut remarquer que la 3ème hypothèse a un biais faible plus on augmente la taille du sample. La méthode 1 est moins précise que la 3 plus la taille du sample est elevée. 
+Quand on a un petit nombre de sample on utilise la 1.
+Quand on a un grand nombre de sample on utilise la 3. 
+
+```{r}
+print(Fx(0))
+```
+
+
+
+
