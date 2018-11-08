@@ -85,35 +85,28 @@ Les points sont alignés, la loi triangle semble convenir.
 
 
 ```{r}
-# On peut faire de cette façon aussi 
+# ecdf : fonction de répartition dans laquelle on met les données
 fe <- ecdf(donnees)
 plot(donnees, sqrt(1-fe(donnees)), main="sqrt(1-fe(x))")
 ```
 
 ## Q3 
 ```{r}
+
+# Simulation 1 : avec la loi triangle T
 simTriangle <- function (t) {
+  # On utilise T pour simuler la loi triangle
   return(t-((2*t)*sqrt(1-runif(1))))
 }
 
-main1 <- function() {
-  n=3000
-  vect=numeric(n)
-  for(i in 1:n) {
-    vect[i] = simTriangle(4)
-  }
-  hist(vect)
-}
-main1()
-
-```
-
-```{r}
+# Simulation 2 : avec l'inversion de la fdr de X sur U
 Fx <- function(x) {
+  # Fonction de répartition
   return(1-(((tt-x)^2)/(4*tt^2)))
 }
 
 inverse = function (f, lower = -100, upper = 100) {
+  # F-1(U) suit la loi de X
   function (y) uniroot((function (x) f(x) - y), lower = lower, upper = upper)[1]
 }
 main2 <- function() {
@@ -122,6 +115,7 @@ main2 <- function() {
   n=3000
   vect=numeric(n)
   for(i in 1:n) {
+    # On simule la loi triangle on prenant l'inverse de la fonction de répartition de T et en l'appliquant sur U, une loi uniforme
     vect[i] <- unlist(simTriInv(runif(1))[1], use.names=FALSE)
   }
   

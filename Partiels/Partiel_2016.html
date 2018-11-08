@@ -197,8 +197,8 @@ u = \lambda x ; dx = \frac{du}{\lambda}
  &amp;= \lambda \frac{n}{n+1}
 \end{align}\]</span> Voir les propriétés de la fonction Gamma.</p>
 <p>Il faut donc multiplier notre estimateur par <span class="math inline">\(\frac{n-1}{n}\)</span> pour qu’il ne soit plus biaisé. <span class="math display">\[\begin{align}
- E\Big[ \hat{\theta_n}\Big] = \frac{n}{n-1}\lambda \newline
- E \Big[\frac{n-1}{n}\hat{\theta_n}\Big] = \lambda
+ E\Big[ \hat{\theta_n}\Big] = \frac{n}{n+1}\lambda \newline
+ E \Big[\frac{n+1}{n}\hat{\theta_n}\Big] = \lambda
 \end{align}\]</span></p>
 <p>Dire que l’on veut ne remplacer que 10% des transistors si la garantie est de t nombre d’années, cela revient à dire que la probabilité qu’on tire un transistors dont la durée de vie sera inférieur à t est de 10%. Avec la fonction de répartition, cela correspond à : <span class="math display">\[F_x(t) = P(X \leq t) = 0.1\]</span></p>
 <p>Il faut déterminer t. Comme <span class="math inline">\(F_x(t)\)</span> est strictement croissante, elle est inversible. Alors : <span class="math display">\[
@@ -227,7 +227,7 @@ print(t*1000)</code></pre>
 <pre class="r"><code># En jours
 print((t*1000)/24)</code></pre>
 <pre><code>## [1] 20.10815</code></pre>
-<p>Il faudrait fixer la garantie à 0.451 milliers d’heures pour n’avoir que 10% des transistors à changer.</p>
+<p>Il faudrait fixer la garantie à 0.48 milliers d’heures pour n’avoir que 10% des transistors à changer.</p>
 
 
 

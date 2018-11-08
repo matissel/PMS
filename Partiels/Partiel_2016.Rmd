@@ -103,8 +103,8 @@ Voir les propriétés de la fonction Gamma.
 
 Il faut donc multiplier notre estimateur par $\frac{n-1}{n}$ pour qu'il ne soit plus biaisé. 
 $$\begin{align}
- E\Big[ \hat{\theta_n}\Big] = \frac{n}{n-1}\lambda \newline
- E \Big[\frac{n-1}{n}\hat{\theta_n}\Big] = \lambda
+ E\Big[ \hat{\theta_n}\Big] = \frac{n}{n+1}\lambda \newline
+ E \Big[\frac{n+1}{n}\hat{\theta_n}\Big] = \lambda
 \end{align}$$
 
 Dire que l'on veut ne remplacer que 10% des transistors si la garantie est de t nombre d'années, cela revient à dire que la probabilité qu'on tire un transistors dont la durée de vie sera inférieur à t est de 10%. 
