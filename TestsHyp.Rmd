@@ -1,0 +1,58 @@
+---
+title: "Test d'hypothèses simples"
+author: "Matisse Landais"
+date: "25 February 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Travail en profondeur sur un test d'hypothèses simples
+
+Il y a deux Usines. Chicago et Buffalo. 4 lots sont interpellés à la frontière et on veut savoir s'ils viennent de l'usine 1 ou 2, afin de mener une enquête et trouver la taupe. 
+
+- La dimension des produits de Buffalo suit une loi normale de moyenne m=50 et de variance 100. 
+- A Chicago, c'est une loi normale de moyenne 45 et de variance 100. 
+- Sur les 4 produits saisis, cette caractéristique était de 47 en moyenne. 
+
+## Mener une enquête à Buffalo ? 
+ 
+Le directeur de l'usine veut que le risque de lancer une enquête pour rien soit de 25% maximum. On veut contrôler cette erreur. 
+
+- H0 : produit vient de Chicago m=45
+- H1 : produit vient de Buffalo m=50
+
+|Décision/Vérité|H0|H1|
+|---------------|--|--|
+|H0|$1-\alpha$|$1- \beta$|
+|H1|$\alpha$|$\beta$|
+
+- $1-\alpha$ s'appelle le niveau de confiance
+- $1-\beta$, $\beta$ : puissance 
+
+Le risque le plus grave est de lancer une enquête alors qu'il n'y a pas lieu. Le moins grave est de laisser courir une taupe. 
+
+## Mise en place du test d'hypothèses 
+Modèle sous H0 : 
+$X_i$ est de loi normale (45,100). On considère qu'il vient de Chicago.
+$X_i\sim N(45,100)$
+donc 
+$$\begin{equation}
+  \bar{X_4}= \frac{1}{4}\sum_{i=1}^{n} \sim N(45,100)
+\end{equation}$$
+
+- On veut que si H0 est vrai alors :
+$\begin{equation} P(\bar{X_4} \epsilon W) \leftrightarrow P(\bar{X_4} > l_\alpha) = \alpha \end{equation}$
+
+- Cela veut dire que l'on a une probabilité de 0.25 qu'au dessus de $l_\alpha$ les produits viennent de Buffalo. L'enquête aurait donc seulement 25% de "chances" d'être inutile. Il faut maintenant trouver $l_\alpha$
+
+ - $\bar{X_4} \sim N(45,100)$ alors $Z = \frac{\bar{X_4}-45}{\sqrt 25}$. 
+Donc, $P(\bar{X_4} > l_\alpha) \leftrightarrow P(Z > \frac{l_\alpha - 45}{\sqrt 25}) = 0.25$. On prend $0.25*2$ dans la table car c'est une table pour un intervalle bilatéral. 
+
+$$\begin{equation} l_\alpha = 0.6745*5 + 45 = 48.35 \end{equation}$$
+
+On peut voir que $47 < 48.35$ donc on ne peut rejeter l'hypothèse H0. 
+
+ 

@@ -1,0 +1,75 @@
+---
+title: "Aide mémoire PMS"
+author: "Matisse Landais"
+date: "21 February 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Ce fichier est un utilitaire me permettant de réutiliser mon code de TP et des exercices de PMS. 
+
+### Exercice sur les températures
+
+La température minimale suit une loi normale. $m$ est la moyenne empirique (0°C) et $S^{'}_n$ la variance empirique, de 2°C.
+$$X\sim N(m,S^{'}_n)$$. On a 14 mesures de température. Le but est de trouver des intervalles de confiances au seuil de 5% pour la variance. 
+
+Grâce à la loi de Fisher (7.4.6), on connait $m$ donc on peut trouver la fonction pivotale suivante : 
+$$\frac{1}{\sigma^2}\sum_{i=1}^{n} (X_i-m)^2 = \frac{nS^2_n}{\sigma^2}\sim \chi^2_n$$ 
+
+On veut un intervalle bilatérale ($\alpha/2$). 
+On a une loi Khi-Deux avec n degrés de libertés et on veut trouver une borne pour la variance, en repartant de la définition : 
+$$
+P(a \leq \frac{nS²_n}{\sigma^2} \leq b) = P(\frac{nS^2_n}{b} \leq \sigma^2 \leq \frac{nS^2_n}{a}) = F_{\chi^2_n-1}(b) - F_{\chi^2_n-1}(a)
+$$
+
+Ici, l'intervalle voulu est bilatérale donc $F_{\chi^2_n-1}(b) = 1-\frac{\alpha}{2}$ et $F_{\chi^2_n-1}(a) = \frac{\alpha}{2} \\$. 
+
+La table du Khi Deux donne $z_{n,\alpha}$, avec Z suivant une loi Khi Deux, $P(Z > z_{n,\alpha}) = 1-F_{\chi^2_n-1}(a) = \alpha$. On prend alors $$b = z_{n-1,\alpha/2} \\ a = z_{n-1,1-\alpha/2} \\ P(\frac{nS^2_n}{b} \leq \sigma^2 \leq \frac{nS²_n}{a}) = 1-\alpha$$
+
+D'où : 
+$$\Big[ \frac{nS^2_n}{z_{n-1,\alpha/2}}, \frac{nS^2_n}{z_{n-1,1-\alpha/2}} \Big] = \Big[ \frac{(n-1)S^{'2}_n}{z_{n-1,\alpha/2}}, \frac{(n-1)S^{'2}_n}{z_{n-1,1-\alpha/2}} \Big]$$
+> A noter que si on connaît m, on ne divise que par KhiN et pas KhiN-1
+
+### Modélisation en R 
+```{r}
+idcVar <- function(alpha, varEmp, n, type)
+{
+  n <- n
+  varEmp <- varEmp 
+  alpha <- alpha
+  if(type=="bi")
+  {
+    i1=(n*varEmp)/qchisq(1-alpha/2,n)
+    i2=(n*varEmp)/qchisq(alpha/2,n)
+  }else if(type=="unig")
+  {
+    i1=(n*varEmp)/qchisq(1-alpha,n)
+    i2="infini"
+  }else{
+    i1="0"
+    i2=(n*varEmp)/qchisq(alpha,n)
+  }
+
+
+
+
+cat("[", i1, i2, "]")
+}
+```
+
+
+On peut voir que l'écart entre V1 et V3 est plus faible qu'entre V2 et V4. Cela est du à la forme du Khi Deux. En l'infini, on voit que la densité est plus plate donc la variance plus forte. La différence est donc plus conséquente.
+```{r}
+#  [V3 .. V4]
+idcVar(0.05,2,14, "bi")
+# [V1 .. +infini]
+idcVar(0.05,2,14,"unig")
+# [0 .. V2]
+idcVar(0.05,2,14, "unid")
+```
+
