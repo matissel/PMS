@@ -1,0 +1,16 @@
+Liens utiles:
+
+Identifier la distribution d'un jeu de donnée: 
+https://stackoverflow.com/questions/31741742/how-to-identify-the-distribution-of-the-given-data-using-r
+
+https://openclassrooms.com/fr/courses/4525306-initiez-vous-a-la-statistique-inferentielle/5016618-testez-une-moyenne-ou-une-variance
+
+Rappel sur les intervalles de confiance : 
+http://cedric.cnam.fr/~saporta/Rappels%20sur%20les%20intervalles%20de%20confiance.pdf
+
+Fonction pivotaleqnorm(1-alpha/2)
+Intervalles de confiance pour l’espérance
+Intervalles de confiance pour la variance
+Intervalles de confiance pour une proportion
+Tests sur les hypothèses : 
+http://images.icube.unistra.fr/fr/img_auth.php/4/4f/Hypo-1.pdf?fbclid=IwAR332lBDT6ebdTqbvcAAoI6BVkIO5ycps2LgwDw1jIFtcHIos2lfm4LG7RM
