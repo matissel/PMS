@@ -54,5 +54,22 @@ Donc, $P(\bar{X_4} > l_\alpha) \leftrightarrow P(Z > \frac{l_\alpha - 45}{\sqrt 
 $$\begin{equation} l_\alpha = 0.6745*5 + 45 = 48.35 \end{equation}$$
 
 On peut voir que $47 < 48.35$ donc on ne peut rejeter l'hypothèse H0. 
+Cela veut dire que si la valeur de l'échantillon (ici 47) était supérieure à 48.35, on aurait eu - de 25% de chances de se tromper. 
+
+### P-Valeur 
+Il s'agit du risque minimum qu'il faut prendre pour rejeter H0, c'est à dire que les pièces viennent de Chicago.
+
+$$\begin{equation}
+\begin{split}
+P & =  P(\bar{X_4} > 47)  \\
+ & = P(Z > \frac{47-45}{5}) \\ 
+ & = P(Z > \frac{2}{5}) \\
+P(Z < \frac{2}{5}) & = 1 - P(Z > \frac{2}{5}) \\
+ & = 1 - 0.6554 \\ 
+ & = 0.345 
+\end{split}
+\end{equation}$$
+
+Si on augmente le risque à 34.5% on peut rejeter l'hypothèse de la taupe à Chicago. 
 
  
